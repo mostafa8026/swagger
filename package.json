@@ -1,12 +1,12 @@
 {
-  "name": "@nestjs/swagger",
-  "version": "4.8.3",
+  "name": "@dcdl/swagger",
+  "version": "4.8.6",
   "description": "Nest - modern, fast, powerful node.js web framework (@swagger)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "repository": "https://github.com/nestjs/swagger",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && tsc --declaration index.ts",
     "format": "prettier \"lib/**/*.ts\" --write",
     "lint": "eslint 'lib/**/*.ts' --fix",
     "prepublish:next": "npm run build",
@@ -80,5 +80,8 @@
       "pre-commit": "lint-staged",
       "commit-msg": "commitlint -c .commitlintrc.json -E HUSKY_GIT_PARAMS"
     }
+  },
+  "publishConfig": {
+    "registry": "https://artifactory.chapyar.com/artifactory/api/npm/npm/"
   }
 }
