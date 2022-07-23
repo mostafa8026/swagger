@@ -1,6 +1,6 @@
-import { DECORATORS } from '../constants';
-import { createMixedDecorator } from './helpers';
 import { clone } from 'lodash';
+import { DECORATORS } from '../constants';
+import { createExtendedMixedDecorator } from './helpers';
 
 export function ApiExtension(extensionKey: string, extensionProperties: any) {
   if (!extensionKey.startsWith('x-')) {
@@ -13,5 +13,5 @@ export function ApiExtension(extensionKey: string, extensionProperties: any) {
     [extensionKey]: clone(extensionProperties)
   };
 
-  return createMixedDecorator(DECORATORS.API_EXTENSION, extensionObject);
+  return createExtendedMixedDecorator(DECORATORS.API_EXTENSION, extensionObject);
 }

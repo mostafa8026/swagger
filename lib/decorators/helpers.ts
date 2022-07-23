@@ -1,3 +1,5 @@
+import { METHOD_METADATA } from '@nestjs/common/constants';
+import { isConstructor } from '@nestjs/common/utils/shared.utils';
 import { isArray, isUndefined, negate, pickBy } from 'lodash';
 import { DECORATORS } from '../constants';
 import { METADATA_FACTORY_NAME } from '../plugin/plugin-constants';
@@ -73,6 +75,56 @@ export function createPropertyDecorator<T extends Record<string, any> = any>(
         propertyKey
       );
     }
+  };
+}
+
+interface IPrototype { prototype: any; }
+
+export function createExtendedMixedDecorator<T = any>(
+  metakey: string,
+  metadata: T
+): MethodDecorator & ClassDecorator {
+  return (
+    target: object & IPrototype,
+    key?: string | symbol,
+    descriptor?: TypedPropertyDescriptor<any>
+  ): any => {
+    
+    if (descriptor) {
+      Reflect.defineMetadata(metakey, metadata, descriptor.value);
+      return descriptor;
+    }
+
+    const propertyKeys = Object.getOwnPropertyNames(target.prototype);
+
+    for (const propertyKey of propertyKeys) {
+      if (isConstructor(propertyKey)) {
+        continue;
+      }
+
+      const methodDescriptor = Object.getOwnPropertyDescriptor(
+        target.prototype,
+        propertyKey
+      );
+
+      if (!methodDescriptor) {
+        continue;
+      }
+
+      const isApiMethod = Reflect.hasMetadata(
+        METHOD_METADATA,
+        methodDescriptor.value
+      );
+
+      if (!isApiMethod) {
+        continue;
+      }
+
+      Reflect.defineMetadata(metakey, metadata, methodDescriptor.value);
+    }
+
+    Reflect.defineMetadata(metakey, metadata, target);
+    return target;
   };
 }
 
