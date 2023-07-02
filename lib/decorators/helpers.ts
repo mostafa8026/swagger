@@ -91,6 +91,10 @@ export function createExtendedMixedDecorator<T = any>(
   ): any => {
     
     if (descriptor) {
+      metadata = {
+        ...metadata,
+        ...(Reflect.getMetadata(metakey, descriptor.value) || {})
+      };
       Reflect.defineMetadata(metakey, metadata, descriptor.value);
       return descriptor;
     }
@@ -120,9 +124,17 @@ export function createExtendedMixedDecorator<T = any>(
         continue;
       }
 
+      metadata = {
+        ...metadata,
+        ...(Reflect.getMetadata(metakey, methodDescriptor.value) || {})
+      };
       Reflect.defineMetadata(metakey, metadata, methodDescriptor.value);
     }
 
+    metadata = {
+      ...metadata,
+      ...(Reflect.getMetadata(metakey, target) || {})
+    };
     Reflect.defineMetadata(metakey, metadata, target);
     return target;
   };
